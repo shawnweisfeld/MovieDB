@@ -12,9 +12,9 @@ namespace MovieDB.Pages.Movies
 {
     public class EditModel : PageModel
     {
-        private readonly MovieDB.Models.MovieContext _context;
+        private readonly MovieDB.Models.MovieContext<Movie> _context;
 
-        public EditModel(MovieDB.Models.MovieContext context)
+        public EditModel(MovieDB.Models.MovieContext<Movie> context)
         {
             _context = context;
         }
@@ -22,14 +22,9 @@ namespace MovieDB.Pages.Movies
         [BindProperty]
         public Movie Movie { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(string id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Movie = await _context.Movie.SingleOrDefaultAsync(m => m.ID == id);
+            Movie = await _context.GetItemAsync(id);
 
             if (Movie == null)
             {
@@ -45,30 +40,9 @@ namespace MovieDB.Pages.Movies
                 return Page();
             }
 
-            _context.Attach(Movie).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MovieExists(Movie.ID))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.UpdateItemAsync(Movie.id, Movie);
 
             return RedirectToPage("./Index");
-        }
-
-        private bool MovieExists(int id)
-        {
-            return _context.Movie.Any(e => e.ID == id);
         }
     }
 }

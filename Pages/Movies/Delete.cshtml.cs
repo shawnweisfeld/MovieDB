@@ -11,9 +11,9 @@ namespace MovieDB.Pages.Movies
 {
     public class DeleteModel : PageModel
     {
-        private readonly MovieDB.Models.MovieContext _context;
+        private readonly MovieDB.Models.MovieContext<Movie> _context;
 
-        public DeleteModel(MovieDB.Models.MovieContext context)
+        public DeleteModel(MovieDB.Models.MovieContext<Movie> context)
         {
             _context = context;
         }
@@ -21,14 +21,9 @@ namespace MovieDB.Pages.Movies
         [BindProperty]
         public Movie Movie { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(string id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Movie = await _context.Movie.SingleOrDefaultAsync(m => m.ID == id);
+            Movie = await _context.GetItemAsync(id);
 
             if (Movie == null)
             {
@@ -37,19 +32,13 @@ namespace MovieDB.Pages.Movies
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync(string id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Movie = await _context.Movie.FindAsync(id);
+            Movie = await _context.GetItemAsync(id);
 
             if (Movie != null)
             {
-                _context.Movie.Remove(Movie);
-                await _context.SaveChangesAsync();
+                await _context.DeleteItemAsync(id);
             }
 
             return RedirectToPage("./Index");

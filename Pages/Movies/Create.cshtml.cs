@@ -11,9 +11,9 @@ namespace MovieDB.Pages.Movies
 {
     public class CreateModel : PageModel
     {
-        private readonly MovieDB.Models.MovieContext _context;
+        private readonly MovieDB.Models.MovieContext<Movie> _context;
 
-        public CreateModel(MovieDB.Models.MovieContext context)
+        public CreateModel(MovieDB.Models.MovieContext<Movie> context)
         {
             _context = context;
         }
@@ -33,8 +33,7 @@ namespace MovieDB.Pages.Movies
                 return Page();
             }
 
-            _context.Movie.Add(Movie);
-            await _context.SaveChangesAsync();
+            await _context.CreateItemAsync(Movie);
 
             return RedirectToPage("./Index");
         }

@@ -11,9 +11,9 @@ namespace MovieDB.Pages.Movies
 {
     public class IndexModel : PageModel
     {
-        private readonly MovieDB.Models.MovieContext _context;
+        private readonly MovieDB.Models.MovieContext<Movie> _context;
 
-        public IndexModel(MovieDB.Models.MovieContext context)
+        public IndexModel(MovieDB.Models.MovieContext<Movie> context)
         {
             _context = context;
         }
@@ -22,7 +22,7 @@ namespace MovieDB.Pages.Movies
 
         public async Task OnGetAsync()
         {
-            Movie = await _context.Movie.ToListAsync();
+            Movie = (await _context.GetItemsAsync()).ToList();
         }
     }
 }

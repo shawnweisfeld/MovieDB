@@ -11,23 +11,23 @@ namespace MovieDB.Pages.Movies
 {
     public class DetailsModel : PageModel
     {
-        private readonly MovieDB.Models.MovieContext _context;
+        private readonly MovieDB.Models.MovieContext<Movie> _context;
 
-        public DetailsModel(MovieDB.Models.MovieContext context)
+        public DetailsModel(MovieDB.Models.MovieContext<Movie> context)
         {
             _context = context;
         }
 
         public Movie Movie { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Movie = await _context.Movie.SingleOrDefaultAsync(m => m.ID == id);
+            Movie = await _context.GetItemAsync(id);
 
             if (Movie == null)
             {

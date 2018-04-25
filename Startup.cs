@@ -23,8 +23,11 @@ namespace MovieDB
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<MovieContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("MovieContext")));            
+            services.AddSingleton<MovieContext<Movie>>(x => 
+                new MovieContext<Movie>(Configuration.GetValue<string>("endpoint"),
+                                            Configuration.GetValue<string>("authkey"),
+                                            Configuration.GetValue<string>("database")));
+
             services.AddMvc();
         }
 
